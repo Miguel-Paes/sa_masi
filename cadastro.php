@@ -1,23 +1,39 @@
 <?php
 require_once 'conexao.php';
 
+$erro = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $nome = $_POST['nome'];
-  $cpf = $_POST['cpf']; //A falta do ponto e vírgula aqui causava erro, adicionado e corrigido.
-
-  if (empty($nome) || empty($cpf)) {
-    die('Por favor, preencha todos os campos.');
-  }
-  $sql = "INSERT INTO clientes (nome, cpf) VALUES ('$nome', '$cpf')";
-  mysqli_query($conn, $sql);
-
-  if (mysqli_errno($conn) == 1062) {
-    echo ('Erro: CPF já cadastrado.');
-  } else {
-    header('Location: index.php?msg=adicionado'); //Adição da mensagem de confirmação na URL
-  }
-
-  exit;
+    $nome = $_POST['nome'];
+    $cpf = $_POST['cpf'];
+    
+    // Validação básica dos campos
+    if (empty($nome) || empty($cpf)) {
+        $erro = 'Por favor, preencha todos os campos!';
+    } else {
+        // Verificar se o CPF já existe
+        $sql_check = "SELECT id FROM clientes WHERE cpf = '" . mysqli_real_escape_string($conn, $cpf) . "'";
+        $result_check = mysqli_query($conn, $sql_check);
+        
+        if (!$result_check) {
+            $erro = 'Erro ao verificar CPF: ' . mysqli_error($conn);
+            echo $erro;
+        } elseif (mysqli_num_rows($result_check) > 0) {
+            $erro = 'Este CPF já está cadastrado!';
+            echo $erro;
+        } else {
+            // Inserir novo cliente
+            $sql = "INSERT INTO clientes (nome, cpf) VALUES ('" . mysqli_real_escape_string($conn, $nome) . "', '" . mysqli_real_escape_string($conn, $cpf) . "')";
+            
+            if (mysqli_query($conn, $sql)) {
+                header('Location: index.php');
+                exit;
+            } else {
+                $erro = 'Erro ao cadastrar cliente: ' . mysqli_error($conn);
+                echo $erro;
+            }
+        }
+    }
 }
 ?>
 <!doctype html>
@@ -31,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>Cadastrar Cliente</h1>
   <form method="post">
-    <label>Nome:<br><input type="text" name="nome"></label><br><br>
-    <label>CPF:<br><input type="text" name="cpf"></label><br><br>
+    <label>Nome:<br><input type="text" name="nome" required></label><br><br>
+    <label>CPF:<br><input type="text" name="cpf" required></label><br><br>
     <button type="">Salvar</button>
   </form>
 

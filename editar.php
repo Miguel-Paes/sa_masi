@@ -34,8 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   <h1>Editar</h1>
   <form method="post">
-    <label>Nome:<br><input type="text" name="nome" value="<?php echo $row['nome']; ?>"></label><br><br>
-    <label>CPF:<br><input type="text" name="cpf" value="<?php echo $row['cpf']; ?>"></label><br><br>
+    <label>Nome:<br><input required type="text" name="nome" value="<?php echo $row['nome']; ?>"></label><br><br>
+    <label>CPF:<br><input required type="text" name="cpf" value="<?php echo $row['cpf']; ?>"></label><br><br>
     <button type="submit">Atualizar</button>
   </form>
   <p><a href="index.php">Voltar</a></p>

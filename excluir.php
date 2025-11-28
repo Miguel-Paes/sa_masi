@@ -12,8 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($_POST['resposta'] === 'sim') {
             $sql = "DELETE FROM clientes WHERE id = $id";
             mysqli_query($conn, $sql);
+            header('Location: index.php?msg=excluido'); //Redireciona para a página inicial, com mensagem de confirmação. Antes, redirecionava para editar.php, corrigido.
+        } else {
+            header('Location: index.php');
         }
-        header('Location: index.php?msg=excluido'); //Redireciona para a página inicial, com mensagem de confirmação. Antes, redirecionava para editar.php, corrigido.
         exit;
     }
 }
@@ -22,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!-- Formulário necessário para a validação -->
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -42,3 +44,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 </html>
+ 
